@@ -1,0 +1,29 @@
+import java.util.Scanner;
+public class MyProgram
+{
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the number: ");
+        int num = scanner.nextInt();
+        double x = 1;
+        boolean y = true;
+        double answer = 0;
+        double pAnswer = 1;
+        while(y){
+            answer = (pAnswer + (num/pAnswer))/2;
+            
+            
+ 
+            if(Math.abs(pAnswer - answer) < .001){
+                System.out.println(answer);
+                y = false;
+            }   else    {
+               pAnswer = answer;
+                
+            }
+            
+        }
+        
+    }
+}
