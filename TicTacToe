@@ -1,0 +1,118 @@
+import java.util.Scanner;
+public class TicTacToeTester
+{
+    //You don't need to alter any of the code in this class!
+    //This is just to test that your TicTacToe class is working correctly
+    public static void main(String[] args)
+    {
+        TicTacToe board = new TicTacToe();
+        printBoard(board.getBoard());
+        int counter = 0;
+        int counterX = 0;
+        int counterO = 0;
+        String player;
+        Scanner scanner = new Scanner(System.in);
+        while (counter < 9){
+            if(counter % 2 == 0){
+                player = "X";
+            }   else    {
+                player = "O";
+            }
+            System.out.println("Player pick row");
+            int x = scanner.nextInt();
+            System.out.println("Player pick column");
+            int y = scanner.nextInt();
+            if((x > 0 && x < 4) && (y > 0 && y < 4)) {
+                if(board.getBoard()[x-1][y-1].equals("-")){
+                    board.change(player,x,y);
+                    counter++;
+                    if(board.check("X") == true){
+                        System.out.println("Player X is the winner.");
+                        counter = 9;
+                    }
+                    if(board.check("O") == true){
+                        System.out.println("Player O is the winner.");
+                        counter = 9;
+                    }
+                }   else    {
+                    System.out.println("Spot is occupied");
+                }
+            }   else    {
+                System.out.println("Number picked is not on board");
+            }
+        }
+        
+    }
+    
+    public static void printBoard(String[][] array)
+    {
+        for(String[] row: array)
+        {
+            for(String play: row)
+            {
+                System.out.print(play + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
+
+
+public class TicTacToe
+{
+    private String[][] grid = new String[3][3];
+
+    public TicTacToe(){
+        for (int i = 0; i < grid.length; i++){
+            for (int j = 0; j < grid.length; j++){
+                grid[i][j] = "-";
+            }
+        }
+        
+    }    
+    
+    
+    public void change(String z, int x, int y){
+        grid[x-1][y-1] = z;
+        System.out.println("");
+        for (int i = 0; i < grid.length; i++){
+            for (int j = 0; j < grid.length; j++){
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println("");
+        }
+        
+    }
+    
+    public boolean check(String player){
+        for(int i = 0; i < 3; i++){
+        //rows
+            if(grid[i][0].equals(player) && grid[i][1].equals(player) &&grid[i][2].equals(player)){
+                return true;
+            }
+        }
+        
+        for(int j = 0; j < 3; j++){
+        //columns
+            if(grid[0][j].equals(player) && grid[1][j].equals(player) &&grid[2][j].equals(player)){
+                return true;
+            }
+        }
+        
+        if(grid[0][0].equals(player) && grid[1][1].equals(player) && grid[2][2].equals(player)){
+            return true;
+        }
+        if(grid[0][2].equals(player) && grid[1][1].equals(player) && grid[2][0].equals(player)){
+            return true;
+        }
+        
+        return false;
+
+    }
+    
+    public String[][] getBoard(){
+        return grid;
+    }
+    
+}
