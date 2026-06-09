@@ -1,0 +1,83 @@
+const int truthPin = A5;
+const int fsrPin = A0;
+const float Vref = 5.0;
+
+int period = 5000;  // Default period
+int srate = 20;     // Default sample rate
+
+bool repeat = false;
+
+float readAveraged(int pin) {
+  long sum = 0;
+  const int n = 5;
+  for (int i = 0; i < n; i++) {
+    sum += analogRead(pin);
+  }
+  return (float)sum / n;
+}
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial);
+  Serial.println("Program Started...");
+}
+
+void loop() {
+  if (!repeat) {
+    // Prompt sampling conditions
+    Serial.print("Enter sampling period(ms): ");
+    while (Serial.available() == 0);  // Wait for input
+    period = Serial.parseInt();      // Read period input
+    Serial.read(); // Clear buffer
+    Serial.print("Enter sample rate: ");
+    while (Serial.available() == 0);  // Wait for input
+    srate = Serial.parseInt();       // Read sample rate input
+    Serial.read(); // Clear buffer
+
+    // Assign default values in case of invalid input
+    if (period == 0) period = 5000;
+    if (srate == 0) srate = 20;
+  }
+
+
+  // Prompt to start
+  Serial.print("Start sampling?(hit return): ");
+  while (Serial.available() == 0); // Wait for return input
+  Serial.read(); // Clear buffer
+
+  // Countdown
+  for (int i = 3; i > 0; i--) {
+    Serial.println(i);
+    delay(1000);  // Wait 1 second
+  }
+  Serial.println("Go!");
+
+  // Sampling
+  unsigned long startTime = millis();
+  unsigned long nextSample = millis();
+  int sampleCount = 0;
+  while (millis() - startTime < period) {
+	if (millis() >= nextSample) {
+		float adcValue = readAveraged(fsrPin);
+		float fsrVoltage = (adcValue / 1023.0) * Vref;
+		Serial.print(fsrVoltage, 3);
+		Serial.print(',');
+
+		adcValue = readAveraged(truthPin);
+		float trueVoltage = (adcValue / 1023.0) * Vref;
+		Serial.println(trueVoltage, 3);
+
+		++sampleCount;
+		nextSample += (1000 / srate);
+  }}
+  Serial.println("Done.");
+  Serial.print("Sample Count: ");
+  Serial.println(sampleCount);
+  Serial.println("-----------------------------");
+
+  Serial.print("Repeat with same configuration?(y/n) ");
+  while (Serial.available() == 0);
+  String s = Serial.readString();
+  s.trim();
+  repeat = (s == "y");
+}
